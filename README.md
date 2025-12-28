@@ -16,9 +16,39 @@ This project focuses on:
 
 ---
 
-My implementation uses two different sorting algorithms based on the size of the input:
-- For small inputs (2 to 5 elements), it uses a simple sorting algorithm with hardcoded sequences of operations.
-- For larger inputs (more than 5 elements), it employs a more complex algorithm, such as a radix sort or a quicksort variant adapted for the constraints of the push_swap project.
+My implementation uses two different sorting strategies depending on the size of the input:
+
+- For small inputs (2 to 5 elements), it uses dedicated sorting routines with predefined sequences of operations.
+- For larger inputs (more than 5 elements), it applies an index-based sorting strategy that progressively moves elements between two stacks according to their relative order.
+
+To simplify comparisons and avoid dealing with large or negative values directly, an indexing technique is used. Each input number is mapped to an index representing its position in the sorted order. These indices remain constant throughout the execution and are used to guide all sorting decisions.
+
+The stack is implemented as a doubly linked list, where each node contains both the original value and its assigned index:
+
+```c
+typedef struct s_stack
+{
+    int             value;
+    int             index;
+    struct s_stack  *next;
+    struct s_stack  *prev;
+}   t_stack;
+```
+
+Here, value stores the original integer, index represents its relative order once sorted, and next and prev allow bidirectional traversal of the stack.
+
+### Program Flow and Index Usage
+1. **Input Parsing and Validation**: The program validates all arguments, checking for non-numeric values, duplicates, and integer overflows. If an error is detected, the program prints Error and exits cleanly.
+
+2. **Stack creation**: All valid integers are stored in stack A as nodes of the stack structure, with their indices initially unset.
+
+3. **Index Assignment**: Once the stack is created, each element is assigned an index based on its position in the sorted order. The smallest value receives index 0, the next smallest index 1, and so on.
+
+4. **Sorting Strategy**:
+   - For small stacks (2-5 elements): If the stack contains a small number of elements, a specific small-sort routine is applied.
+   - For larger stacks (>5 elements): The program uses an index-based sorting algorithm that efficiently sorts the stack using the allowed operations. Elements are progressively moved from stack A to stack B based on their indices, effectively separating the data into manageable groups.
+
+5. **Reconstruction of the sorted stack**: After stack A has been reduced, elements are moved back from stack B to stack A in the correct order, resulting in a fully sorted stack.
 
 ---
 
@@ -107,8 +137,7 @@ If the input is already sorted or contains fewer than two numbers, the program p
 ## Use of Artificial Intelligence
 
 AI tools (ChatGPT) were used as a learning aid during the development of this project.
-- They were specifically used to:
+They were specifically used to:
 - Clarify the project requirements and evaluation criteria
 - Help understand algorithmic strategies commonly used for push_swap
 - Assist in reasoning about program flow, data structures, and edge cases
-All code was written manually, tested, and debugged by me without direct code generation from AI.
